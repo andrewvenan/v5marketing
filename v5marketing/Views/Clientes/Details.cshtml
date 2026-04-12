@@ -1,0 +1,118 @@
+﻿@model v5marketing.Models.Cliente
+
+@{
+    ViewData["Title"] = "Detalhes do Cliente";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Detalhes do Cliente</h2>
+                    <p class="text-muted mb-0">Visualização completa do cadastro</p>
+                </div>
+
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">Editar</a>
+                    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+
+                    <!-- DADOS EMPRESA -->
+                    <h5 class="fw-bold mb-3 text-primary">Dados da Empresa</h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">CNPJ</label>
+                            <input class="form-control" value="@Model.Cnpj" readonly />
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold">Razão Social</label>
+                            <input class="form-control" value="@Model.RazaoSocial" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nome Fantasia</label>
+                            <input class="form-control" value="@Model.NomeFantasia" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Contato</label>
+                            <input class="form-control" value="@Model.NomeContato" readonly />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- CONTATO -->
+                    <h5 class="fw-bold mb-3 text-primary">Contato</h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">E-mail</label>
+                            <input class="form-control" value="@Model.Email" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Telefone</label>
+                            <input class="form-control" value="@Model.Telefone" readonly />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- ENDEREÇO -->
+                    <h5 class="fw-bold mb-3 text-primary">Endereço</h5>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">CEP</label>
+                            <input class="form-control" value="@Model.Cep" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Rua</label>
+                            <input class="form-control" value="@Model.Rua" readonly />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Número</label>
+                            <input class="form-control" value="@Model.Numero" readonly />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Bairro</label>
+                            <input class="form-control" value="@Model.Bairro" readonly />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Cidade</label>
+                            <input class="form-control" value="@Model.Cidade" readonly />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Complemento</label>
+                            <input class="form-control" value="@Model.Complemento" readonly />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- OBSERVAÇÃO -->
+                    <h5 class="fw-bold mb-3 text-primary">Observações</h5>
+
+                    <div class="col-12">
+                        <textarea class="form-control" rows="4" readonly>@Model.Observacao</textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

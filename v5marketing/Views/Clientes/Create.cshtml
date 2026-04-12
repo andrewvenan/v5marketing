@@ -1,0 +1,255 @@
+﻿@model v5marketing.Models.Cliente
+
+@{
+    ViewData["Title"] = "Cadastro de Cliente";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Cadastro de Cliente</h2>
+                    <p class="text-muted mb-0">Preencha os dados abaixo para cadastrar um novo cliente.</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" class="row g-3" id="formCliente">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Cnpj" class="form-label fw-semibold">CNPJ</label>
+                            <input asp-for="Cnpj" class="form-control" id="cnpj" placeholder="00.000.000/0000-00" />
+                            <span asp-validation-for="Cnpj" class="text-danger"></span>
+                            <small id="cnpjErro" class="text-danger d-none">CNPJ inválido.</small>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label asp-for="RazaoSocial" class="form-label fw-semibold">Razão Social</label>
+                            <input asp-for="RazaoSocial" class="form-control" placeholder="Digite a razão social" />
+                            <span asp-validation-for="RazaoSocial" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NomeFantasia" class="form-label fw-semibold">Nome Fantasia</label>
+                            <input asp-for="NomeFantasia" class="form-control" placeholder="Digite o nome fantasia" />
+                            <span asp-validation-for="NomeFantasia" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NomeContato" class="form-label fw-semibold">Nome do Contato</label>
+                            <input asp-for="NomeContato" class="form-control" placeholder="Digite o nome do contato" />
+                            <span asp-validation-for="NomeContato" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
+                            <input asp-for="Email" class="form-control" placeholder="Digite o e-mail" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Telefone" class="form-label fw-semibold">Telefone</label>
+                            <input asp-for="Telefone" class="form-control" id="telefone" placeholder="(00) 00000-0000" />
+                            <span asp-validation-for="Telefone" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-3" />
+
+                        <div class="col-md-3">
+                            <label asp-for="Cep" class="form-label fw-semibold">CEP</label>
+                            <input asp-for="Cep" class="form-control" id="cep" placeholder="00000-000" />
+                            <span asp-validation-for="Cep" class="text-danger"></span>
+                            <small id="cepStatus" class="text-muted d-none">Consultando CEP...</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Rua" class="form-label fw-semibold">Rua</label>
+                            <input asp-for="Rua" class="form-control" id="rua" placeholder="Rua" />
+                            <span asp-validation-for="Rua" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="Numero" class="form-label fw-semibold">Número</label>
+                            <input asp-for="Numero" class="form-control" placeholder="Número" />
+                            <span asp-validation-for="Numero" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Bairro" class="form-label fw-semibold">Bairro</label>
+                            <input asp-for="Bairro" class="form-control" id="bairro" placeholder="Bairro" />
+                            <span asp-validation-for="Bairro" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Cidade" class="form-label fw-semibold">Cidade</label>
+                            <input asp-for="Cidade" class="form-control" id="cidade" placeholder="Cidade" />
+                            <span asp-validation-for="Cidade" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Complemento" class="form-label fw-semibold">Complemento</label>
+                            <input asp-for="Complemento" class="form-control" placeholder="Complemento" />
+                            <span asp-validation-for="Complemento" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Observacao" class="form-label fw-semibold">Observação</label>
+                            <textarea asp-for="Observacao" class="form-control" rows="4" placeholder="Digite uma observação"></textarea>
+                            <span asp-validation-for="Observacao" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-success px-4">Salvar</button>
+                            <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function aplicarMascaraCnpj(valor) {
+            valor = valor.replace(/\D/g, '');
+            valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+            return valor.substring(0, 18);
+        }
+
+        function aplicarMascaraCep(valor) {
+            valor = valor.replace(/\D/g, '');
+            valor = valor.replace(/^(\d{5})(\d)/, '$1-$2');
+            return valor.substring(0, 9);
+        }
+
+        function aplicarMascaraTelefone(valor) {
+            valor = valor.replace(/\D/g, '');
+
+            if (valor.length <= 10) {
+                valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2');
+                valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+            } else {
+                valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2');
+                valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+
+            return valor.substring(0, 15);
+        }
+
+        function validarCNPJ(cnpj) {
+            cnpj = cnpj.replace(/[^\d]+/g, '');
+
+            if (cnpj.length !== 14) return false;
+            if (/^(\d)\1+$/.test(cnpj)) return false;
+
+            let tamanho = cnpj.length - 2;
+            let numeros = cnpj.substring(0, tamanho);
+            let digitos = cnpj.substring(tamanho);
+
+            let soma = 0;
+            let pos = tamanho - 7;
+
+            for (let i = tamanho; i >= 1; i--) {
+                soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+                if (pos < 2) pos = 9;
+            }
+
+            let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+            tamanho = tamanho + 1;
+            numeros = cnpj.substring(0, tamanho);
+            soma = 0;
+            pos = tamanho - 7;
+
+            for (let i = tamanho; i >= 1; i--) {
+                soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+                if (pos < 2) pos = 9;
+            }
+
+            resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+            return resultado === parseInt(digitos.charAt(1));
+        }
+
+        const form = document.getElementById("formCliente");
+        const cnpjInput = document.getElementById("cnpj");
+        const cepInput = document.getElementById("cep");
+        const telefoneInput = document.getElementById("telefone");
+        const cnpjErro = document.getElementById("cnpjErro");
+        const cepStatus = document.getElementById("cepStatus");
+
+        cnpjInput.addEventListener("input", function () {
+            this.value = aplicarMascaraCnpj(this.value);
+            cnpjErro.classList.add("d-none");
+            this.classList.remove("is-invalid");
+        });
+
+        cepInput.addEventListener("input", function () {
+            this.value = aplicarMascaraCep(this.value);
+        });
+
+        telefoneInput.addEventListener("input", function () {
+            this.value = aplicarMascaraTelefone(this.value);
+        });
+
+        cnpjInput.addEventListener("blur", function () {
+            if (this.value.trim() === "") return;
+
+            if (!validarCNPJ(this.value)) {
+                this.classList.add("is-invalid");
+                cnpjErro.classList.remove("d-none");
+            } else {
+                this.classList.remove("is-invalid");
+                cnpjErro.classList.add("d-none");
+            }
+        });
+
+        cepInput.addEventListener("blur", function () {
+            let cep = this.value.replace(/\D/g, '');
+
+            if (cep.length === 8) {
+                cepStatus.classList.remove("d-none");
+
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        cepStatus.classList.add("d-none");
+
+                        if (!data.erro) {
+                            document.getElementById("rua").value = data.logradouro || "";
+                            document.getElementById("bairro").value = data.bairro || "";
+                            document.getElementById("cidade").value = data.localidade || "";
+                        } else {
+                            alert("CEP não encontrado.");
+                        }
+                    })
+                    .catch(() => {
+                        cepStatus.classList.add("d-none");
+                        alert("Não foi possível consultar o CEP.");
+                    });
+            }
+        });
+
+        form.addEventListener("submit", function (e) {
+            if (cnpjInput.value.trim() !== "" && !validarCNPJ(cnpjInput.value)) {
+                e.preventDefault();
+                cnpjInput.classList.add("is-invalid");
+                cnpjErro.classList.remove("d-none");
+                cnpjInput.focus();
+            }
+        });
+    </script>
+}

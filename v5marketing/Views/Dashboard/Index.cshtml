@@ -1,0 +1,220 @@
+﻿@model v5marketing.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">Visão geral do sistema v5marketing.</p>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total de Clientes</h6>
+                    <h2 class="fw-bold text-primary mb-0">@Model.TotalClientes</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Cidades Atendidas</h6>
+                    <h2 class="fw-bold text-success mb-0">@Model.TotalCidades</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Clientes com E-mail</h6>
+                    <h2 class="fw-bold text-info mb-0">@Model.TotalComEmail</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Clientes com Telefone</h6>
+                    <h2 class="fw-bold text-warning mb-0">@Model.TotalComTelefone</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold mb-0">Clientes por Cidade</h5>
+                        <span class="text-muted small">Top 10 cidades</span>
+                    </div>
+
+                    <div style="position: relative; height: 350px; width: 100%;">
+                        <canvas id="graficoCidades"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">Resumo por Cidade</h5>
+
+                    @if (Model.ClientesPorCidade.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var item in Model.ClientesPorCidade)
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>@item.Cidade</span>
+                                    <span class="badge bg-primary rounded-pill">@item.Quantidade</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Ainda não há dados suficientes para exibir cidades.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0">Últimos Clientes Cadastrados</h5>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-sm btn-outline-primary">
+                    Ver todos
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Razão Social</th>
+                            <th>Cidade</th>
+                            <th>Contato</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.UltimosClientes.Any())
+                        {
+                            foreach (var cliente in Model.UltimosClientes)
+                            {
+                                <tr>
+                                    <td>@cliente.RazaoSocial</td>
+                                    <td>@cliente.Cidade</td>
+                                    <td>@cliente.NomeContato</td>
+                                    <td class="text-center">
+                                        <a asp-controller="Clientes"
+                                               asp-action="Details"
+                                               asp-route-id="@cliente.Id"
+                                               class="btn btn-sm btn-outline-info">
+                                            Detalhes
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    Nenhum cliente cadastrado.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const labelsCidades = [
+        @Html.Raw(string.Join(",", Model.ClientesPorCidade.Select(c => $"'{c.Cidade}'")))
+        ];
+
+        const dadosCidades = [
+        @Html.Raw(string.Join(",", Model.ClientesPorCidade.Select(c => c.Quantidade)))
+        ];
+
+        const canvas = document.getElementById('graficoCidades');
+        const context = canvas.getContext('2d');
+
+        const gradient = context.createLinearGradient(0, 0, 0, 350);
+        gradient.addColorStop(0, 'rgba(13, 110, 253, 0.9)');
+        gradient.addColorStop(1, 'rgba(13, 110, 253, 0.2)');
+
+        new Chart(context, {
+        type: 'bar',
+        data: {
+        labels: labelsCidades,
+        datasets: [{
+        label: 'Clientes por Cidade',
+        data: dadosCidades,
+        backgroundColor: gradient,
+        borderColor: 'rgba(13, 110, 253, 1)',
+        borderWidth: 1,
+        borderRadius: 8,
+        maxBarThickness: 42
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+        legend: {
+        display: true
+        },
+        tooltip: {
+        backgroundColor: '#212529',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        padding: 12
+        }
+        },
+        scales: {
+        x: {
+        grid: {
+        display: false
+        },
+        ticks: {
+        color: '#6c757d'
+        }
+        },
+        y: {
+        beginAtZero: true,
+        suggestedMax: Math.max(...dadosCidades, 1),
+        ticks: {
+        precision: 0,
+        stepSize: 1,
+        color: '#6c757d'
+        },
+        grid: {
+        color: 'rgba(108, 117, 125, 0.15)'
+        }
+        }
+        }
+        }
+        });
+    </script>
+}

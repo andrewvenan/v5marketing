@@ -1,0 +1,195 @@
+﻿@model IEnumerable<v5marketing.Models.AuditoriaLog>
+
+@{
+    ViewData["Title"] = "Auditoria";
+
+    string usuarioFiltro = ViewBag.UsuarioFiltro ?? "";
+    string acaoFiltro = ViewBag.AcaoFiltro ?? "";
+    string entidadeFiltro = ViewBag.EntidadeFiltro ?? "";
+    int paginaAtual = ViewBag.PaginaAtual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
+    int tamanhoPagina = ViewBag.TamanhoPagina ?? 20;
+}
+
+<div class="container mt-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total de Logs</h6>
+                    <h2 class="fw-bold mb-0">@totalRegistros</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h4 class="fw-bold mb-1">Auditoria do Sistema</h4>
+                    <p class="text-muted mb-0">Acompanhe as ações realizadas pelos usuários.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Usuário</label>
+                    <input type="text" name="usuario" value="@usuarioFiltro" class="form-control" placeholder="Filtrar por usuário" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Ação</label>
+                    <input type="text" name="acao" value="@acaoFiltro" class="form-control" placeholder="Filtrar por ação" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Entidade</label>
+                    <input type="text" name="entidade" value="@entidadeFiltro" class="form-control" placeholder="Filtrar por entidade" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Por página</label>
+                    <select name="tamanhoPagina" class="form-select">
+                        <option value="10" selected="@(tamanhoPagina == 10)">10</option>
+                        <option value="20" selected="@(tamanhoPagina == 20)">20</option>
+                        <option value="50" selected="@(tamanhoPagina == 50)">50</option>
+                        <option value="100" selected="@(tamanhoPagina == 100)">100</option>
+                    </select>
+                </div>
+
+                <div class="col-md-1 d-grid">
+                    <button type="submit" class="btn btn-dark">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABELA DESKTOP -->
+    <div class="card shadow-sm border-0 rounded-4 d-none d-md-block">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Usuário</th>
+                            <th>Ação</th>
+                            <th>Entidade</th>
+                            <th>Descrição</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.DataHora.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                    <td>@item.UsuarioLogin</td>
+                                    <td>@item.Acao</td>
+                                    <td>@item.Entidade</td>
+                                    <td>@item.Descricao</td>
+                                    <td>@item.Ip</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Nenhum log encontrado.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARDS MOBILE -->
+    <div class="d-md-none">
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="card shadow-sm border-0 rounded-4 mb-3">
+                    <div class="card-body">
+                        <div class="mb-2"><strong>Data/Hora:</strong> @item.DataHora.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                        <div class="mb-2"><strong>Usuário:</strong> @item.UsuarioLogin</div>
+                        <div class="mb-2"><strong>Ação:</strong> @item.Acao</div>
+                        <div class="mb-2"><strong>Entidade:</strong> @item.Entidade</div>
+                        <div class="mb-2"><strong>Descrição:</strong> @item.Descricao</div>
+                        <div><strong>IP:</strong> @item.Ip</div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body text-center text-muted py-4">
+                    Nenhum log encontrado.
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="text-muted">
+                    Página <strong>@paginaAtual</strong> de <strong>@totalPaginas</strong>
+                </div>
+
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(paginaAtual == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-usuario="@usuarioFiltro"
+                                   asp-route-acao="@acaoFiltro"
+                                   asp-route-entidade="@entidadeFiltro"
+                                   asp-route-pagina="@(paginaAtual - 1)"
+                                   asp-route-tamanhoPagina="@tamanhoPagina">
+                                Anterior
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaAtual ? "active" : "")">
+                                <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-usuario="@usuarioFiltro"
+                                       asp-route-acao="@acaoFiltro"
+                                       asp-route-entidade="@entidadeFiltro"
+                                       asp-route-pagina="@i"
+                                       asp-route-tamanhoPagina="@tamanhoPagina">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <li class="page-item @(paginaAtual == totalPaginas ? "disabled" : "")">
+                            <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-usuario="@usuarioFiltro"
+                                   asp-route-acao="@acaoFiltro"
+                                   asp-route-entidade="@entidadeFiltro"
+                                   asp-route-pagina="@(paginaAtual + 1)"
+                                   asp-route-tamanhoPagina="@tamanhoPagina">
+                                Próxima
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

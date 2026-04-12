@@ -1,0 +1,82 @@
+﻿@model v5marketing.Models.Usuario
+
+@{
+    ViewData["Title"] = "Excluir Usuário";
+    var usuarioAtual = ViewBag.UsuarioAtual as string;
+    var ehUsuarioAtual = usuarioAtual == Model.Login;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold text-danger mb-1">Excluir Usuário</h2>
+                    <p class="text-muted mb-0">Confirme a exclusão do usuário.</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    @if (ehUsuarioAtual)
+                    {
+                        <div class="alert alert-warning">
+                            Você não pode excluir o próprio usuário logado.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            Tem certeza que deseja excluir este usuário?
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nome</label>
+                            <input class="form-control" value="@Model.Nome" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">E-mail</label>
+                            <input class="form-control" value="@Model.Email" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Login</label>
+                            <input class="form-control" value="@Model.Login" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Perfil</label>
+                            <input class="form-control" value="@Model.Perfil" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Status</label>
+                            <input class="form-control" value="@(Model.Ativo ? "Ativo" : "Inativo")" readonly />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Criado em</label>
+                            <input class="form-control" value="@Model.DataCriacao.ToString("dd/MM/yyyy HH:mm")" readonly />
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        @if (!ehUsuarioAtual)
+                        {
+                            <button type="submit" class="btn btn-danger px-4">Excluir</button>
+                        }
+
+                        <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

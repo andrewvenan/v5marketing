@@ -1,0 +1,143 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - v5marketing</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index">
+                    v5marketing
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="menuNavbar">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Clientes" asp-action="Index">Clientes</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Clientes" asp-action="Create">Novo Cadastro</a>
+                        </li>
+
+                        @if (Context.Session.GetString("UsuarioPerfil") == "Administrador")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Usuarios" asp-action="Index">Usuários</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Auditoria" asp-action="Index">Auditoria</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-2 gap-lg-3 flex-wrap mt-3 mt-lg-0">
+                        <button type="button" id="toggleTheme" class="btn btn-outline-light btn-sm">
+                            🌙 Tema
+                        </button>
+
+                        @if (Context.Session.GetString("UsuarioLogado") != null)
+                        {
+                            <span class="user-info">
+                                👤 @Context.Session.GetString("UsuarioNome") (@Context.Session.GetString("UsuarioPerfil"))
+                            </span>
+
+                            <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-light btn-sm">
+                                Sair
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        @if (TempData["Sucesso"] != null)
+        {
+            <div class="toast align-items-center text-bg-success border-0 show shadow" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        @TempData["Sucesso"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+
+        @if (TempData["Erro"] != null)
+        {
+            <div class="toast align-items-center text-bg-danger border-0 show shadow" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        @TempData["Erro"]
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top text-center py-3 mt-4 footer-custom">
+        <small>© 2026 - v5marketing</small>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+            (function () {
+                const html = document.documentElement;
+                const themeKey = "v5marketing-theme";
+                const savedTheme = localStorage.getItem(themeKey) || "light";
+
+                html.setAttribute("data-theme", savedTheme);
+
+                const button = document.getElementById("toggleTheme");
+                if (button) {
+                    updateButtonText(savedTheme);
+
+                    button.addEventListener("click", function () {
+                        const currentTheme = html.getAttribute("data-theme");
+                        const nextTheme = currentTheme === "dark" ? "light" : "dark";
+
+                        html.setAttribute("data-theme", nextTheme);
+                        localStorage.setItem(themeKey, nextTheme);
+                        updateButtonText(nextTheme);
+                    });
+                }
+
+                function updateButtonText(theme) {
+                    button.textContent = theme === "dark" ? "☀️ Tema" : "🌙 Tema";
+                }
+
+                const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl, { delay: 3500 }).show();
+                });
+            })();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

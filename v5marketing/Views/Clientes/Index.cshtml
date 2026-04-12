@@ -1,0 +1,245 @@
+﻿@model IEnumerable<v5marketing.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Clientes";
+
+    string busca = ViewBag.Busca ?? "";
+    string ordenacaoAtual = ViewBag.OrdenacaoAtual ?? "";
+    int paginaAtual = ViewBag.PaginaAtual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
+    int tamanhoPagina = ViewBag.TamanhoPagina ?? 10;
+    bool usuarioAdministrador = ViewBag.UsuarioAdministrador ?? false;
+}
+
+<div class="container mt-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total de Clientes</h6>
+                    <h2 class="fw-bold mb-0">@totalRegistros</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Clientes Cadastrados</h4>
+                        <p class="text-muted mb-0">Gerencie os clientes do sistema v5marketing.</p>
+                    </div>
+                    <a asp-action="Create" class="btn btn-primary">Novo Cliente</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-7">
+                    <label class="form-label fw-semibold">Buscar cliente</label>
+                    <input type="text"
+                           name="busca"
+                           value="@busca"
+                           class="form-control"
+                           placeholder="Busque por razão social, fantasia, CNPJ, contato, e-mail ou cidade" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Registros por página</label>
+                    <select name="tamanhoPagina" class="form-select">
+                        <option value="5" selected="@(tamanhoPagina == 5)">5</option>
+                        <option value="10" selected="@(tamanhoPagina == 10)">10</option>
+                        <option value="25" selected="@(tamanhoPagina == 25)">25</option>
+                        <option value="50" selected="@(tamanhoPagina == 50)">50</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-dark">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABELA DESKTOP -->
+    <div class="card shadow-sm border-0 rounded-4 d-none d-md-block">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <a asp-action="Index"
+                                       asp-route-busca="@busca"
+                                       asp-route-ordenacao="@ViewBag.OrdenarPorCnpj"
+                                       asp-route-tamanhoPagina="@tamanhoPagina"
+                                       class="text-decoration-none text-dark">
+                                    CNPJ
+                                </a>
+                            </th>
+                            <th>
+                                <a asp-action="Index"
+                                       asp-route-busca="@busca"
+                                       asp-route-ordenacao="@ViewBag.OrdenarPorRazao"
+                                       asp-route-tamanhoPagina="@tamanhoPagina"
+                                       class="text-decoration-none text-dark">
+                                    Razão Social
+                                </a>
+                            </th>
+                            <th>Nome Fantasia</th>
+                            <th>Contato</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>
+                                <a asp-action="Index"
+                                       asp-route-busca="@busca"
+                                       asp-route-ordenacao="@ViewBag.OrdenarPorCidade"
+                                       asp-route-tamanhoPagina="@tamanhoPagina"
+                                       class="text-decoration-none text-dark">
+                                    Cidade
+                                </a>
+                            </th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Cnpj</td>
+                                    <td>@item.RazaoSocial</td>
+                                    <td>@item.NomeFantasia</td>
+                                    <td>@item.NomeContato</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.Telefone</td>
+                                    <td>@item.Cidade</td>
+                                    <td class="text-center">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">Editar</a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info me-1">Detalhes</a>
+                                        @if (usuarioAdministrador)
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Excluir</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    Nenhum cliente encontrado.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARDS MOBILE -->
+    <div class="d-md-none">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="card shadow-sm border-0 rounded-4 mb-3 cliente-mobile-card">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">@item.RazaoSocial</h5>
+                        <p class="text-muted mb-3">@item.NomeFantasia</p>
+
+                        <div class="mb-2">
+                            <strong>CNPJ:</strong> @item.Cnpj
+                        </div>
+                        <div class="mb-2">
+                            <strong>Contato:</strong> @item.NomeContato
+                        </div>
+                        <div class="mb-2">
+                            <strong>E-mail:</strong> @item.Email
+                        </div>
+                        <div class="mb-2">
+                            <strong>Telefone:</strong> @item.Telefone
+                        </div>
+                        <div class="mb-3">
+                            <strong>Cidade:</strong> @item.Cidade
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info">Detalhes</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a>
+                            @if (usuarioAdministrador)
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body text-center text-muted py-4">
+                    Nenhum cliente encontrado.
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="text-muted">
+                    Página <strong>@paginaAtual</strong> de <strong>@totalPaginas</strong>
+                </div>
+
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(paginaAtual == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-busca="@busca"
+                                   asp-route-ordenacao="@ordenacaoAtual"
+                                   asp-route-pagina="@(paginaAtual - 1)"
+                                   asp-route-tamanhoPagina="@tamanhoPagina">
+                                Anterior
+                            </a>
+                        </li>
+
+                        @for (int i = 1; i <= totalPaginas; i++)
+                        {
+                            <li class="page-item @(i == paginaAtual ? "active" : "")">
+                                <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-busca="@busca"
+                                       asp-route-ordenacao="@ordenacaoAtual"
+                                       asp-route-pagina="@i"
+                                       asp-route-tamanhoPagina="@tamanhoPagina">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <li class="page-item @(paginaAtual == totalPaginas ? "disabled" : "")">
+                            <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-busca="@busca"
+                                   asp-route-ordenacao="@ordenacaoAtual"
+                                   asp-route-pagina="@(paginaAtual + 1)"
+                                   asp-route-tamanhoPagina="@tamanhoPagina">
+                                Próxima
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
