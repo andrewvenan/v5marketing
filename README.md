@@ -38,3 +38,6 @@ Projeto focado em:
 1. Clone o projeto:
 ```bash
 git clone https://github.com/seuusuario/v5marketing.git
+
+<img width="1280" height="629" alt="image" src="https://github.com/user-attachments/assets/47ebccd5-7ca5-439a-9f10-0195442db33d" />
+
